@@ -1,0 +1,14 @@
+[[pages]]
+path = "pages/loginPage.py"
+name = "Login Page"
+icon = "🔑"
+
+[[pages]]
+path = "pages/importPage.py"
+name = "Import Page"
+icon = "📂"
+
+[[pages]]
+path = "pages/trainingPage.py"
+name = "Training Page"
+icon = "📊"
