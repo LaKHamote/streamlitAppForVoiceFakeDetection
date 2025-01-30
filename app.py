@@ -1,7 +1,4 @@
 import streamlit as st
-st.session_state.counter = 1
-print(st.session_state)
-
 
 from st_pages import add_page_title, get_nav_from_toml
 

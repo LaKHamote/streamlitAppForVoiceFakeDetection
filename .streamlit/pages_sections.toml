@@ -1,7 +1,12 @@
 [[pages]]
-path = "pages/loginPage.py"
-name = "Login Page"
-icon = "🔑"
+path = "pages/homePage.py"
+name = "Home Page"
+icon = "🏠"
+
+[[pages]]
+path = "pages/profilePage.py"
+name = "Profile Page"
+icon = "⚙️"
 
 [[pages]]
 path = "pages/importPage.py"
