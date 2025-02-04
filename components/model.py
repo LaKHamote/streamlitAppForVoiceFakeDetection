@@ -1,6 +1,5 @@
 from fastai.vision.all import *
-import pickle
-import zipfile
+import streamlit as st
 
 class VoiceFakeDetection:
     def __init__(self):
@@ -18,10 +17,11 @@ class VoiceFakeDetection:
         }
 
     def train_model(self, architecture_name, transform_type, zipFile, num_epochs, num_batches, callbacks):
-        tmp_path = "/".join(zipFile.split('/')[:-1])
-        if zipfile.is_zipfile(zipFile.name):
-            with zipfile.ZipFile(zipFile.name, 'r') as zip_ref:
-                zip_ref.extractall(tmp_path)
+        # tmp_path = "/".join(zipFile.split('/')[:-1])
+        # if zipfile.is_zipfile(zipFile.name):
+        #     with zipfile.ZipFile(zipFile.name, 'r') as zip_ref:
+        #         zip_ref.extractall(tmp_path)
+        tmp_path="/teamspace/uploads/mini-dataset"
         if architecture_name not in self.architectures:
             return "Architecture not suported."
 
@@ -41,14 +41,12 @@ class VoiceFakeDetection:
             return f"Erro ao carregar dados: {str(e)}"
 
         try:
-            self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'))
+            self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path='.tmp')
             self.model.fine_tune(num_epochs, cbs=eval(callbacks))
 
-            self.model.export(f"export_{architecture_name}_{transform_type}.pkl")
-
             weights_path = f"{architecture_name}_{transform_type}.pkl"
-            with open(weights_path, 'wb') as f:
-                pickle.dump(self.model, f)
+            self.model.export(weights_path)
+            st.session_state.uploaded_file = f".tmp/{weights_path}"
 
             return f"Training completed! Model save as {weights_path}."
         except Exception as e:
