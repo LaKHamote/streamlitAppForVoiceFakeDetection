@@ -13,13 +13,13 @@ architecture_name = st.selectbox("Choose the architecture", list(model.architect
 transform_type = st.selectbox("Choose the transformation", list(model.transforms.keys()))
 
 # Number of epochs and batches
-num_epochs = st.number_input("Number of Epochs", min_value=0, step=1)
-num_batches = st.number_input("Number of Batches", min_value=0, step=1)
+num_epochs = st.number_input("Number of Epochs", min_value=1, step=1)
+num_batches = st.number_input("Number of Batches", min_value=4, step=2)
 
 # Callbacks
 callbacks = st.text_input(
     "Edit your Callback",
-    value="EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)"
+    value="EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)",
 )
 
 # File upload
@@ -27,5 +27,4 @@ zip_file = st.file_uploader("Upload a ZIP file containing the dataset", type=["z
 
 # Training button
 if st.button("Train"):
-    training_log = model.train_model(architecture_name, transform_type, zip_file, num_epochs, num_batches, callbacks)
-    st.text_area("Training Log", value=training_log, height=300)
+    model.train_model(architecture_name, transform_type, zip_file, num_epochs, num_batches, callbacks)
