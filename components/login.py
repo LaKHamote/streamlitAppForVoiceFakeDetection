@@ -5,6 +5,7 @@ from streamlit_authenticator.utilities import (LoginError, RegisterError, ResetE
 
 class Login():
     def __init__(self, permission:bool=True) -> None:
+
         self.authenticator = stauth.Authenticate("config.yaml")
 
         if "view" not in st.session_state:
@@ -25,7 +26,7 @@ class Login():
             else:
                 st.warning('Please enter your username and password')
 
-        elif st.session_state["view"] == "Register":
+        elif st.session_state.view == "Register":
             try:
                 email_of_registered_user, username_of_registered_user, name_of_registered_user = self.authenticator.register_user()
                 if email_of_registered_user:

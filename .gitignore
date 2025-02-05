@@ -2,3 +2,4 @@ weigths
 venv
 __pycache__
 .tmp
+.bash_history

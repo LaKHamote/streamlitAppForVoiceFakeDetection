@@ -1,19 +1,24 @@
 [[pages]]
 path = "pages/homePage.py"
-name = "Home Page"
-icon = "🏠"
+name = "Home"
+icon = "🏡"
 
 [[pages]]
 path = "pages/profilePage.py"
-name = "Profile Page"
+name = "Settings"
 icon = "⚙️"
 
 [[pages]]
 path = "pages/importPage.py"
-name = "Import Page"
-icon = "📂"
+name = "Import Data"
+icon = "📥"
 
 [[pages]]
 path = "pages/trainingPage.py"
-name = "Training Page"
+name = "Training"
+icon = "📈"
+
+[[pages]]
+path = "pages/evaluatePage.py"
+name = "Evaluation"
 icon = "📊"
