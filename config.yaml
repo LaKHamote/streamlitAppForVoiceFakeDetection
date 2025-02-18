@@ -13,12 +13,20 @@ credentials:
       password: $2b$12$arkl/TPy/zb84S7dEWL/beL0T0JcWr70u.bXlTywpGGhBicQCgY1y
       password_hint: Aa12345$
       roles: null
+    gustavo_vrr:
+      email: gustavo.vrr@gmail.com
+      first_name: Gustavo
+      last_name: Rabelo
+      logged_in: false
+      password: $2b$12$qb9umi9dok3XDdnwn4Vjk.aNravpqEre9xWmqW4yesu7zZWXzkAAy
+      password_hint: asdf
+      roles: null
     lakhamote:
       email: lucas@gmail.com
       failed_login_attempts: 0
       first_name: Lucas
       last_name: C. Boaventura
-      logged_in: true
+      logged_in: false
       password: $2b$12$AzZsdnvH5Qpflf/H.U/RNegg2p81HTieiJaoDjzRhD.c.4RelQRUS
       password_hint: Ll12345$
       roles:
@@ -28,8 +36,9 @@ credentials:
       failed_login_attempts: 0
       first_name: Flavio
       last_name: Vidal
-      logged_in: false
+      logged_in: true
       password: $2b$12$Et0SGMlc.Aa77KupZFao1eddm6oSAq0OMcuRzKRw45xz9StTIZ0aa
       password_hint: '12345'
       roles:
       - admin
+key: config_key

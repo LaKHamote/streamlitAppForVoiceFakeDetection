@@ -15,10 +15,3 @@ if uploaded_file is not None:
 
 
 
-
-from context.userContext import getUserContext
-getUserContext()
-print(st.session_state)
-
-
-
