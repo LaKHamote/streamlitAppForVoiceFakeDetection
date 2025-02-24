@@ -51,14 +51,15 @@ class VoiceFakeDetection:
              st.error(f"Erro ao carregar dados: {str(e)}")
 
         try:
-            self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.save_path)
+            self.model_path = f"{self.save_path}/{architecture_name}_{transform_type}"
+            os.makedirs(self.model_path, exist_ok=True)
+            self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
             self.model.fine_tune(num_epochs, cbs=[eval(callbacks), LogCallback, CSVLogger])
 
-            weights_path = f"{architecture_name}_{transform_type}.pkl"
-            self.model.export(weights_path)
-            st.session_state.uploaded_file = f"{self.save_path}/{weights_path}"
+            self.model.export("model.pkl")
+            st.session_state.uploaded_file = f"{self.model_path}/model.pkl"
 
-            st.success(f"Training completed! Model save as {weights_path}.")
+            st.success(f"Training completed! Model save in {self.model_path}.")
 
             self.__plot_loss()
         except Exception as e:
@@ -79,11 +80,10 @@ class VoiceFakeDetection:
         with col2:
             st.subheader("🔢 Confusion Matrix")
             interp = ClassificationInterpretation.from_learner(self.model)
-            fig, ax = plt.subplots(figsize=(4, 4))
-            interp.plot_confusion_matrix()
-            st.pyplot(fig, use_container_width=False)
+            interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
+            plt.savefig(f"{self.model_path}/confusion_matrix.png")
+            st.image(Image.open(f"{self.model_path}/confusion_matrix.png"), use_container_width=False)
 
-        # st.code(self.model.log)
 
         
         
@@ -110,7 +110,7 @@ class LogCallback(Callback):
     # def before_epoch(self):
     #     fig, ax = plt.subplots(figsize=(3, 3))
     #     self.recorder.plot_loss(ax=ax)
-    #     st.session_state.training_table.pyplot(fig, use_container_width=False)  # Use container width for better layout
+    #     st.session_state.training_table.pyplot(fig, use_container_width=False)
 
 # class StreamlitLogger(io.StringIO):
 #     def write(self, message):

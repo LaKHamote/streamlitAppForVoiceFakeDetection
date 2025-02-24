@@ -1,0 +1,4 @@
+[submodule "components/VoCoderRecognition"]
+	path = components/VoCoderRecognition
+	url = git@github.com:fbvidal/VoCoderRecognition.git
+	branch = submodule-for-streamlit-app
