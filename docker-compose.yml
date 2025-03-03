@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "7772:8501"
+    volumes:
+      - .:/app  # Mounts the current directory to /app in the container
+    environment:
+      - STREAMLIT_SERVER_PORT=8501  # Optional: Specify the Streamlit server port

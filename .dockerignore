@@ -1,0 +1,11 @@
+.git
+
+.gitignore
+weigths
+venv
+__pycache__
+.tmp
+.bash_history
+components/VoCoderRecognition/dataset/
+components/VoCoderRecognition/vocoder-models/
+
