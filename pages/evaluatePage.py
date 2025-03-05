@@ -1,6 +1,6 @@
 import streamlit as st
 from fastai.vision.all import load_learner, ClassificationInterpretation
-from components.VoCoderRecognition.simple_detector_creator import generate_single_spec
+from components.VoCoderRecognition.lib.simple_detector_creator import generate_single_spec
 import os
 from PIL import Image
 
@@ -22,7 +22,8 @@ if "uploaded_file" in st.session_state:
 
         st.audio(save_path, format="audio/wav")
 
-        generate_single_spec(SAVE_DIR,
+        generate_single_spec("mel",
+                            SAVE_DIR,
                             SAVE_DIR,
                             uploaded_audio.name,
                             0
