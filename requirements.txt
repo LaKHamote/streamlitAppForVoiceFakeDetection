@@ -1,5 +1,9 @@
-fastai
 streamlit
 st_pages
 streamlit-authenticator
 toml
+
+fastai==2.7.16
+scipy==1.10.1
+librosa
+parallel_wavegan

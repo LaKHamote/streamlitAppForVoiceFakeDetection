@@ -22,7 +22,8 @@ if "uploaded_file" in st.session_state:
 
         st.audio(save_path, format="audio/wav")
 
-        generate_single_spec("mel",
+        generate_single_spec(
+                            "mel",
                             SAVE_DIR,
                             SAVE_DIR,
                             uploaded_audio.name,
