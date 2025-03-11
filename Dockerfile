@@ -1,4 +1,8 @@
-FROM python:3.10.12
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+
+# Install Python manually
+RUN apt-get update && apt-get install -y python3.10 python3-pip
+
 
 RUN apt-get update && apt-get install -y ffmpeg
 

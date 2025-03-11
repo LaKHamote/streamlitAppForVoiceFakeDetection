@@ -5,5 +5,7 @@ services:
       - "7772:8501"
     volumes:
       - .:/app  # Mounts the current directory to /app in the container
+      - ../dataset:/dataset
     environment:
       - STREAMLIT_SERVER_PORT=8501  # Optional: Specify the Streamlit server port
+    runtime: nvidia  #GPU support
