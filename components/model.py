@@ -31,7 +31,7 @@ class VoiceFakeDetection:
         #         zip_ref.extractall(tmp_path)
         st.session_state.training_out = st.empty()
         st.session_state.progress =  st.progress(0.0)
-        tmp_path="/teamspace/uploads/mini-dataset"
+        tmp_path="/dataset"
         if architecture_name not in self.architectures:
             st.warning("Architecture not suported.")
 
