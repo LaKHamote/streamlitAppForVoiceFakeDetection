@@ -27,7 +27,9 @@ if "uploaded_file" in st.session_state:
                             SAVE_DIR,
                             SAVE_DIR,
                             uploaded_audio.name,
-                            0
+                            0,
+                            crop_width=64,
+                            discard_if_too_narrow=True
                         )
         spec_name = os.path.splitext(uploaded_audio.name)[0]+".png"
         st.image(os.path.join(SAVE_DIR, spec_name), use_container_width=False, caption=f"Spectogram of {os.path.splitext(uploaded_audio.name)[0]}")
