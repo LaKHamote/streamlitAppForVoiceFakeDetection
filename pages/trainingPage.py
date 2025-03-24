@@ -22,9 +22,25 @@ callbacks = st.text_input(
     value="EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)",
 )
 
-# File upload
-zip_file = st.file_uploader("Upload a ZIP file containing the dataset", type=["zip"])
+default_datasets = {
+  "Scottish man": "awb",
+  "American man 1": "bdl",
+  "American man 2": "rms",
+  "American woman 1": "clb",
+  "American woman 2": "slt",
+  "Canadian man": "jmk",
+  "Indian man": "ksp"
+} # SPEAKERS from components/VoCoderRecognition/scripts/env.sh 
+
+dataset = st.selectbox("Choose one of our datasets", list(default_datasets.items()), format_func=lambda x: x[0])[1]
 
 # Training button
 if st.button("Train"):
-    model.train_model(architecture_name, transform_type, zip_file, num_epochs, num_batches, callbacks)
+    model.train_model(
+        architecture_name,
+        transform_type,
+        dataset,
+        num_epochs,
+        num_batches,
+        callbacks
+    )
