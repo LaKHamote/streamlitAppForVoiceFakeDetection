@@ -13,8 +13,8 @@ architecture_name = st.selectbox("Choose the architecture", list(model.architect
 transform_type = st.selectbox("Choose the transformation", list(model.transforms.keys()))
 
 # Number of epochs and batches
-num_epochs = st.number_input("Number of Epochs", min_value=1, step=1)
-num_batches = st.number_input("Number of Batches", min_value=4, step=2)
+num_epochs = st.number_input("Number of Epochs", min_value=0, step=1, value=1)
+num_batches = st.number_input("Number of Batches", min_value=0, step=2, value=32)
 
 # Callbacks
 callbacks = st.text_input(
