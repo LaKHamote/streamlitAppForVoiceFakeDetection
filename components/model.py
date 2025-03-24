@@ -24,14 +24,10 @@ class VoiceFakeDetection:
         os.makedirs(self.save_path, exist_ok=True)
 
 
-    def train_model(self, architecture_name, transform_type, zipFile, num_epochs, num_batches, callbacks) -> None:
-        # tmp_path = "/".join(zipFile.split('/')[:-1])
-        # if zipfile.is_zipfile(zipFile.name):
-        #     with zipfile.ZipFile(zipFile.name, 'r') as zip_ref:
-        #         zip_ref.extractall(tmp_path)
+    def train_model(self, architecture_name, transform_type, dataset, num_epochs, num_batches, callbacks) -> None:
         st.session_state.training_out = st.empty()
         st.session_state.progress =  st.progress(0.0)
-        tmp_path="/dataset"
+        tmp_path="/teamspace/uploads/mini-dataset"
         if architecture_name not in self.architectures:
             st.warning("Architecture not suported.")
 
