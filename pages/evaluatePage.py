@@ -3,10 +3,24 @@ from fastai.vision.all import load_learner, ClassificationInterpretation
 from components.VoCoderRecognition.lib.simple_detector_creator import generate_single_spec
 import os
 from PIL import Image
+from context.userContext import getUserContext
 
 
+getUserContext()
 SAVE_DIR = os.path.join(".tmp", st.session_state.username, "uploads")
 os.makedirs(SAVE_DIR, exist_ok=True)
+
+
+uploaded_file = st.file_uploader("Upload a PKL file containing the model", type=["pkl"])
+
+if uploaded_file is not None:
+    st.session_state.uploaded_file = uploaded_file
+    try:
+        model = load_learner(uploaded_file)
+        st.write(model.eval())
+    except:
+        st.error("Error loading model")
+        st.write(uploaded_file)
 
 if "uploaded_file" in st.session_state:
     model = load_learner(st.session_state.uploaded_file)
