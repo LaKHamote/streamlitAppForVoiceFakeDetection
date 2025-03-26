@@ -1,5 +1,6 @@
 from fastai.vision.all import *
 import streamlit as st
+import streamlit_ext as ste
 import os
 from context.userContext import getUserContext
 
@@ -56,14 +57,22 @@ class VoiceFakeDetection:
             st.session_state.uploaded_file = f"{self.model_path}/model.pkl"
 
             st.success(f"Training completed! Model save in {self.model_path}.")
+            self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
+            st.write(self.history_data)
+
+            with open(f"{self.model_path}/model.pkl", "rb") as file:
+                ste.download_button(
+                    label="🚀 Download Model", 
+                    data=file, 
+                    file_name="model.pkl", 
+                    mime="application/octet-stream"
+                )
 
             self.__plot_loss()
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
 
     def __plot_loss(self):
-        st.code(self.model.recorder.metric_names)
-        st.code(self.model.recorder.values)
 
         col1, col2 = st.columns(2)
 
@@ -73,12 +82,34 @@ class VoiceFakeDetection:
             self.model.recorder.plot_loss(ax=ax)
             st.pyplot(fig, use_container_width=False)
 
+
+            csv_buffer =  io.BytesIO()
+            self.history_data.to_csv(csv_buffer, index=False)
+            csv_buffer.seek(0)
+            # Display loss values
+
+            ste.download_button(
+                label="📉 Download Training & Validation Loss", 
+                data=csv_buffer, 
+                file_name="loss_values.csv", 
+                mime="text/csv"
+            )
+
         with col2:
             st.subheader("🔢 Confusion Matrix")
             interp = ClassificationInterpretation.from_learner(self.model)
+            img_buffer = io.BytesIO()
             interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
-            plt.savefig(f"{self.model_path}/confusion_matrix.png")
-            st.image(Image.open(f"{self.model_path}/confusion_matrix.png"), use_container_width=False)
+            plt.savefig(img_buffer, format='png')
+            img_buffer.seek(0)
+            st.image(img_buffer, use_container_width=False)
+
+            ste.download_button(
+                label="📥 Download Confusion Matrix", 
+                data=img_buffer, 
+                file_name="confusion_matrix.png", 
+                mime="image/png"
+            )
 
 
         
