@@ -13,13 +13,13 @@ add_page_title(pg)
 
 pg.run()
 
-st.markdown("""
-    <script>
-        if (performance.navigation.type === 1) {
-            window.location.replace("/");
-        }
-    </script>
-""", unsafe_allow_html=True)
-if "page_loaded" not in st.session_state:
-    st.session_state.page_loaded = True
-    st.switch_page("pages/homePage.py")  # Redirect to home page on refresh
+# st.markdown("""
+#     <script>
+#         if (performance.navigation.type === 1) {
+#             window.location.replace("/");
+#         }
+#     </script>
+# """, unsafe_allow_html=True)
+# if "page_loaded" not in st.session_state:
+#     st.session_state.page_loaded = True
+#     st.switch_page("pages/homePage.py")  # Redirect to home page on refresh
