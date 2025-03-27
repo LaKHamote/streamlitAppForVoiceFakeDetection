@@ -32,14 +32,14 @@ default_datasets = {
   "Indian man": "ksp"
 } # SPEAKERS from components/VoCoderRecognition/scripts/env.sh 
 
-dataset = st.selectbox("Choose one of our datasets", list(default_datasets.items()), format_func=lambda x: x[0])[1]
+speaker = st.selectbox("Choose one of our datasets", list(default_datasets.items()), format_func=lambda x: x[0])[1]
 
 # Training button
 if st.button("Train"):
     model.train_model(
         architecture_name,
         transform_type,
-        dataset,
+        speaker,
         num_epochs,
         num_batches,
         callbacks
