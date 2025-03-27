@@ -25,7 +25,7 @@ class VoiceFakeDetection:
         os.makedirs(self.save_path, exist_ok=True)
 
 
-    def train_model(self, architecture_name, transform_type, dataset, num_epochs, num_batches, callbacks) -> None:
+    def train_model(self, architecture_name, transform_type, speaker, num_epochs, num_batches, callbacks) -> None:
         st.session_state.training_out = st.empty()
         st.session_state.progress =  st.progress(0.0)
         tmp_path="/teamspace/uploads/mini-dataset"
@@ -54,21 +54,25 @@ class VoiceFakeDetection:
             self.model.fine_tune(num_epochs, cbs=[eval(callbacks), LogCallback, CSVLogger])
 
             self.model.export("model.pkl")
-            st.session_state.uploaded_file = f"{self.model_path}/model.pkl"
+            st.session_state.trained_model = f"{self.model_path}/model.pkl"
 
-            st.success(f"Training completed! Model save in {self.model_path}.")
+            st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
             self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
+        
             st.write(self.history_data)
 
-            with open(f"{self.model_path}/model.pkl", "rb") as file:
-                ste.download_button(
-                    label="🚀 Download Model", 
-                    data=file, 
-                    file_name="model.pkl", 
-                    mime="application/octet-stream"
-                )
-
             self.__plot_loss()
+
+            model_buffer = io.BytesIO()
+            with open(f"{self.model_path}/model.pkl", "rb") as file:
+                model_buffer.write(file.read())  
+            model_buffer.seek(0)
+            st.download_button(
+                label="🚀 Download Model", 
+                data=model_buffer, 
+                file_name="model.pkl", 
+                mime="application/octet-stream"
+            )
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
 
@@ -88,7 +92,7 @@ class VoiceFakeDetection:
             csv_buffer.seek(0)
             # Display loss values
 
-            ste.download_button(
+            st.download_button(
                 label="📉 Download Training & Validation Loss", 
                 data=csv_buffer, 
                 file_name="loss_values.csv", 
@@ -104,7 +108,7 @@ class VoiceFakeDetection:
             img_buffer.seek(0)
             st.image(img_buffer, use_container_width=False)
 
-            ste.download_button(
+            st.download_button(
                 label="📥 Download Confusion Matrix", 
                 data=img_buffer, 
                 file_name="confusion_matrix.png", 
