@@ -32,15 +32,21 @@ default_datasets = {
   "Indian man": "ksp"
 } # SPEAKERS from components/VoCoderRecognition/scripts/env.sh 
 
-speaker = st.selectbox("Choose one of our datasets", list(default_datasets.items()), format_func=lambda x: x[0])[1]
+selected_speakers = [default_datasets[spk] for spk in st.multiselect(
+    "Choose one or more of our datasets", 
+    list(default_datasets.keys())
+)]
 
 # Training button
 if st.button("Train"):
-    model.train_model(
-        architecture_name,
-        transform_type,
-        speaker,
-        num_epochs,
-        num_batches,
-        callbacks
-    )
+    if not selected_speakers:
+        st.warning("⚠️ Please select at least one dataset before training.")
+    else:
+        model.train_model(
+            architecture_name,
+            transform_type,
+            selected_speakers,
+            num_epochs,
+            num_batches,
+            callbacks
+        )
