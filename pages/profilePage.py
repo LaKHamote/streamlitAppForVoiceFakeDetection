@@ -13,12 +13,13 @@ st.title("Your Models")
 st.write("Here you can see all the models you have trained and download it to test them with audios.")
 st.info("Notice that this is saved temporarily, so you should download it before finishing your session.")
 
-path = f".tmp/{st.session_state.username}"
-options = st.radio("Choose a model:", [d for d in os.listdir(path) for m in os.listdir(f"{path}/{d}") if m.endswith(".pkl")])
+model_path = f".tmp/{st.session_state.username}"
+os.makedirs(model_path, exist_ok=True)
+options = st.radio("Choose a model:", [d for d in os.listdir(model_path) for m in os.listdir(f"{model_path}/{d}") if m.endswith(".pkl")])
 
 if options:
     model_buffer = io.BytesIO()
-    with open(f"{path}/{options}/model.pkl", "rb") as file:
+    with open(f"{model_path}/{options}/model.pkl", "rb") as file:
         model_buffer.write(file.read())  
     model_buffer.seek(0)
     st.download_button(
@@ -33,7 +34,7 @@ if options:
     col1, col2 = st.columns(2)
 
     with col1:
-        history_data = pd.read_csv(f"{path}/{options}/history.csv")
+        history_data = pd.read_csv(f"{model_path}/{options}/history.csv")
         csv_buffer =  io.BytesIO()
         history_data.to_csv(csv_buffer, index=False)
         csv_buffer.seek(0)
@@ -48,7 +49,7 @@ if options:
     with col2:
         st.subheader("🔢 Confusion Matrix")
         img_buffer = io.BytesIO()
-        with open(f"{path}/{options}/confusion_matrix.png", "rb") as img_file:
+        with open(f"{model_path}/{options}/confusion_matrix.png", "rb") as img_file:
             img_buffer.write(img_file.read())
         img_buffer.seek(0)
 
