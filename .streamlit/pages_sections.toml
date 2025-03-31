@@ -9,11 +9,6 @@ name = "Settings"
 icon = "⚙️"
 
 [[pages]]
-path = "pages/importPage.py"
-name = "Import Data"
-icon = "📥"
-
-[[pages]]
 path = "pages/trainingPage.py"
 name = "Training"
 icon = "📈"
