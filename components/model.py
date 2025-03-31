@@ -58,14 +58,13 @@ class VoiceFakeDetection:
             self.model_path = f"{self.save_path}/{architecture_name}_{transform_type}"
             os.makedirs(self.model_path, exist_ok=True)
             self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
-            self.model.fine_tune(num_epochs, cbs=[eval(callbacks), LogCallback, GraphCallback])
+            self.model.fine_tune(num_epochs, cbs=[eval(callbacks), CSVLogger, LogCallback, GraphCallback])
 
             self.__save_model()
 
-            self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
-            st.table(self.history_data)
+            self.__losses_table()
 
-            self.__plot_losses()
+            self.__plot_results()
 
             
         except Exception as e:
@@ -83,39 +82,44 @@ class VoiceFakeDetection:
         st.session_state.progress.empty()
         st.session_state.graph.empty()
 
-    def __plot_losses(self):
+    def __plot_results(self):
 
         col1, col2 = st.columns(2)
 
         with col1:
             st.subheader("📉 Training & Validation Loss")
-            fig, ax = plt.subplots(figsize=(3, 3))
+            fig, ax = plt.subplots(figsize=(3, 3.314))
             self.model.recorder.plot_loss(ax=ax)
+            plt.savefig(f"{self.model_path}/results.png", bbox_inches="tight", format='png')
             st.pyplot(fig, use_container_width=False)
 
-
-            csv_buffer =  io.BytesIO()
-            self.history_data.to_csv(csv_buffer, index=False)
-            csv_buffer.seek(0)
-            # Display loss values
-
+            img_buffer = io.BytesIO()
+            plt.savefig(img_buffer, bbox_inches="tight", format='png')
+            img_buffer.seek(0)
             st.download_button(
-                label="📉 Download Training & Validation Loss", 
-                data=csv_buffer, 
-                file_name="loss_values.csv", 
-                mime="text/csv"
+                key="download_results",
+                label="📥 Download Confusion Matrix", 
+                data=img_buffer, 
+                file_name="confusion_matrix.png", 
+                mime="image/png"
             )
+
+
+            
 
         with col2:
             st.subheader("🔢 Confusion Matrix")
             interp = ClassificationInterpretation.from_learner(self.model)
             img_buffer = io.BytesIO()
             interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
+            plt.savefig(f"{self.model_path}/confusion_matrix.png", format='png')
+
             plt.savefig(img_buffer, format='png')
             img_buffer.seek(0)
-            st.image(img_buffer, use_container_width=False)
-
+            st.image(img_buffer, use_container_width=True)
+            
             st.download_button(
+                key="download_confusion_matrix",
                 label="📥 Download Confusion Matrix", 
                 data=img_buffer, 
                 file_name="confusion_matrix.png", 
@@ -138,6 +142,22 @@ class VoiceFakeDetection:
             data=model_buffer, 
             file_name="model.pkl", 
             mime="application/octet-stream"
+        )
+    
+    def __losses_table(self):
+        self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
+        st.table(self.history_data)
+
+        csv_buffer =  io.BytesIO()
+        self.history_data.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+        # Display loss values
+
+        st.download_button(
+            label="📉 Download Training & Validation Loss", 
+            data=csv_buffer, 
+            file_name="loss_values.csv", 
+            mime="text/csv"
         )
 
 def label_func(f): 
