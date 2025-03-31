@@ -5,8 +5,8 @@ icon = "🏡"
 
 [[pages]]
 path = "pages/profilePage.py"
-name = "Settings"
-icon = "⚙️"
+name = "Profile"
+icon = "🧑‍💼"
 
 [[pages]]
 path = "pages/trainingPage.py"
