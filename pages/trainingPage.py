@@ -32,6 +32,7 @@ default_datasets = {
   "Indian man": "ksp"
 } # SPEAKERS from components/VoCoderRecognition/scripts/env.sh 
 
+st.session_state.select_speaker = st.empty()
 selected_speakers = [default_datasets[spk] for spk in st.multiselect(
     "Choose one or more of our datasets", 
     list(default_datasets.keys())
@@ -40,7 +41,7 @@ selected_speakers = [default_datasets[spk] for spk in st.multiselect(
 # Training button
 if st.button("Train"):
     if not selected_speakers:
-        st.warning("⚠️ Please select at least one dataset before training.")
+        st.session_state.select_speaker.warning("⚠️ Please select at least one dataset before training.")
     else:
         model.train_model(
             architecture_name,
