@@ -65,7 +65,7 @@ class Login():
                 st.button("Hide", key="hide", on_click=lambda: self.__reset_pswd(False))
             
             else:
-                st.button("Change Password", key="to_reset_pswd", on_click=lambda: self.__reset_pswd(False))
+                st.button("Change Password", key="to_reset_pswd", on_click=lambda: self.__reset_pswd(True))
 
 
     # Function to switch views (updates session state)
