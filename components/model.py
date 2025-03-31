@@ -60,27 +60,14 @@ class VoiceFakeDetection:
             self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
             self.model.fine_tune(num_epochs, cbs=[eval(callbacks), LogCallback, GraphCallback])
 
-            self.model.export("model.pkl")
-            st.session_state.trained_model = f"{self.model_path}/model.pkl"
+            self.__save_model()
 
-            st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
-            self.__empty_logs()
             self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
-        
             st.table(self.history_data)
 
-            self.__plot_loss()
+            self.__plot_losses()
 
-            model_buffer = io.BytesIO()
-            with open(f"{self.model_path}/model.pkl", "rb") as file:
-                model_buffer.write(file.read())  
-            model_buffer.seek(0)
-            st.download_button(
-                label="🚀 Download Model", 
-                data=model_buffer, 
-                file_name="model.pkl", 
-                mime="application/octet-stream"
-            )
+            
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
     
@@ -96,7 +83,7 @@ class VoiceFakeDetection:
         st.session_state.progress.empty()
         st.session_state.graph.empty()
 
-    def __plot_loss(self):
+    def __plot_losses(self):
 
         col1, col2 = st.columns(2)
 
@@ -134,6 +121,24 @@ class VoiceFakeDetection:
                 file_name="confusion_matrix.png", 
                 mime="image/png"
             )
+    
+    def __save_model(self):
+        self.model.export("model.pkl")
+        st.session_state.trained_model = f"{self.model_path}/model.pkl"
+
+        st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
+        self.__empty_logs()
+
+        model_buffer = io.BytesIO()
+        with open(f"{self.model_path}/model.pkl", "rb") as file:
+            model_buffer.write(file.read())  
+        model_buffer.seek(0)
+        st.download_button(
+            label="🚀 Download Model", 
+            data=model_buffer, 
+            file_name="model.pkl", 
+            mime="application/octet-stream"
+        )
 
 def label_func(f): 
     return f.parent.name
