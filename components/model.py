@@ -25,7 +25,7 @@ class VoiceFakeDetection:
         os.makedirs(self.save_path, exist_ok=True)
 
 
-    def train_model(self, architecture_name, transform_type, selected_speakers, num_epochs, num_batches, callbacks) -> None:
+    def train_model(self, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
         self.__init_logs()
 
         if architecture_name not in self.architectures:
@@ -37,8 +37,8 @@ class VoiceFakeDetection:
             st.warning("Transformation not suported.")
 
         try:
-            dataset_path = "components/VoCoderRecognition/dataset/generated/spec/0/"
-            tmp_paths=[f"{dataset_path}{spk}" for spk in selected_speakers]
+            dataset_path = "components/VoCoderRecognition/dataset/generated/spec"
+            tmp_paths=[f"{dataset_path}/{noise}/{spk}" for spk in selected_speakers for noise in selected_noises]
             
             dls = ImageDataLoaders.from_path_func(
                 path=".",
@@ -154,7 +154,7 @@ class VoiceFakeDetection:
         # Display loss values
 
         st.download_button(
-            label="📉 Download Training & Validation Loss", 
+            label="📉 Export table", 
             data=csv_buffer, 
             file_name="loss_values.csv", 
             mime="text/csv"
@@ -177,7 +177,9 @@ class LogCallback(Callback):
         st.session_state.training_out.code(f"Epoch {self.epoch} complete!")
 
 class GraphCallback(Callback):
-    def after_epoch(self):
-        fig, ax = plt.subplots(figsize=(3, 3))
-        self.recorder.plot_loss(ax=ax)
+    def after_loss(self):
+        fig, ax = plt.subplots(figsize=(4, 4))
+        self.recorder.plot_loss(ax=ax, show_epochs=True)
+        ax.set_ylim(0, max(1, ax.get_ylim()[1]))
+        plt.tight_layout()
         st.session_state.graph.pyplot(fig, use_container_width=False)

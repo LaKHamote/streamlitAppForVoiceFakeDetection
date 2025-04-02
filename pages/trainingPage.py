@@ -38,6 +38,21 @@ selected_speakers = [default_datasets[spk] for spk in st.multiselect(
     list(default_datasets.keys())
 )]
 
+noise_labels = {
+    "Extremely noisy": 10,
+    "A lot of noise": 1,
+    "Moderate noise": 0.1,
+    "Low noise": 0.01,
+    "Very low noise": 0.001,
+    "No noise": 0
+} # NOISES from components/VoCoderRecognition/scripts/env.sh 
+
+selected_noises = [noise_labels[spk] for spk in st.multiselect(
+    "Choose how much noise you want to train with.", 
+    list(noise_labels.keys()),
+    default=["No noise"]
+)]
+
 # Training button
 if st.button("Train"):
     if not selected_speakers:
@@ -47,6 +62,7 @@ if st.button("Train"):
             architecture_name,
             transform_type,
             selected_speakers,
+            selected_noises,
             num_epochs,
             num_batches,
             callbacks
