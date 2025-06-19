@@ -36,7 +36,7 @@ credentials:
       failed_login_attempts: 0
       first_name: Flavio
       last_name: Vidal
-      logged_in: true
+      logged_in: false
       password: $2b$12$Et0SGMlc.Aa77KupZFao1eddm6oSAq0OMcuRzKRw45xz9StTIZ0aa
       password_hint: '12345'
       roles:

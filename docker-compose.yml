@@ -2,10 +2,12 @@ services:
   app:
     build: .
     ports:
-      - "7772:8501"
+      - "443:8501"
     volumes:
       - .:/app  # Mounts the current directory to /app in the container
-      - ../dataset/mel-image-ljspeech-and-wavefake:/dataset
+      - ~/.cache/torch/hub:/root/.cache/torch/hub # Get cache of all weights
+      - ../dataset/mel-image-ljspeech-and-wavefake:/dataset-test
+      - ./components/VoCoderRecognition/dataset/generated/spec:/dataset
     environment:
       - STREAMLIT_SERVER_PORT=8501  # Optional: Specify the Streamlit server port
     runtime: nvidia  #GPU support

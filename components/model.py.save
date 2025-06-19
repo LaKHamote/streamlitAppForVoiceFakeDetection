@@ -178,7 +178,8 @@ class LogCallback(Callback):
 class GraphCallback(Callback):
     def after_loss(self):
         fig, ax = plt.subplots(figsize=(4, 4))
-        self.recorder.plot_loss(ax=ax, show_epochs=True)
+
+ax.set_ylim(0, max(1, ax.get_ylim()[1]))        self.recorder.plot_loss(ax=ax, show_epochs=True)
         ax.set_ylim(0, max(1, ax.get_ylim()[1]))
         plt.tight_layout()
         st.session_state.graph.pyplot(fig, use_container_width=False)
