@@ -14,7 +14,7 @@ Este projeto treina e executa uma aplicação de detecção de voz falsa usando 
 
 - Docker version==XXXX
 - nvidia toolkit. Ex: sudo apt install nvidia-container-toolkit
-- ativar runtime nvida para seu docker: Ex: sudo nvidia-ctk runtime configure --runtime=docker
+- ativar runtime nvida para seu docker: Ex: sudo nvidia-ctk runtime configure --runtime=docker e depois reiniciar sudo systemctl restart docker
 - Python3.10 ou maior (para testes locais, opcional)
 
 ## 📁 Estrutura de Diretórios
@@ -31,7 +31,33 @@ Este projeto treina e executa uma aplicação de detecção de voz falsa usando 
 
 └── ...
 
-## ⚙️ Como usar
+## ⚙️ Como usar (Linux)
+
+### 1. Atualizar submodule
+
+git submodule update --remote --merge
+
+### 1. Preparar o dataset default (precisa de scipy==1.10.1, librosa e parallel_wavegan instaldo)
+
+
+
+source components/VoCoderRecognition/setup.sh
+
+O comando vai:
+    baixar os locutores(SPEAKERS) em "components/VoCoderRecognition/scripts/env.sh"
+    baixar os vocoders(VOCODER_TAGS) em "components/VoCoderRecognition/scripts/env.sh"
+    fazer remostragem de frequencia para 22050Hz(exigido pelos vocoders).
+    finalmente vai gerar um novo audio para cada vocoder
+    TODO: seu Espectrograma Mel
+
+Caso queira usar seu próprio dataset, siga a organizacao do dataset default:
+
+-seu_dataset
+--
+
+
+
+
 
 ### 1. Baixar os pesos dos modelos (localmente)
 
