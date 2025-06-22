@@ -8,9 +8,19 @@ from PIL import Image
 login = Login()
 
 login.resetPassword()
+print(dir(login))
+if not login.isLoggedIn():
+    st.title("Public Models")
+    st.write("Welcome to the public models page!")
+    st.write("Here you can see all the models that were trained by other users and download them to test with audios.")
+    st.write("You can also login or register to create your own models.")
+    st.write("If you already have an account, please login to access your profile page.")
+else:
+    st.title(f"Profile Page - {st.session_state.username}")
+    st.write("Welcome to your profile page!")
+    st.write("Here you can see all the models you have trained and download them to test with audios.")
+    st.write("You can also reset your password if needed.")
 
-st.title("Your Models")
-st.write("Here you can see all the models you have trained and download it to test them with audios.")
 st.info("Notice that this is saved temporarily, so you should download it before finishing your session.")
 
 model_path = f".tmp/{st.session_state.username}"

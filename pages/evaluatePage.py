@@ -1,6 +1,6 @@
 import streamlit as st
-from fastai.vision.all import load_learner, ClassificationInterpretation
-from components.VoCoderRecognition.lib.simple_detector_creator import generate_single_spec
+from fastai.vision.all import load_learner
+from components.VoCoderRecognition.lib.melspectrogram_custom import generate_single_spec
 import os
 from PIL import Image
 from context.userContext import getUserContext
@@ -21,7 +21,7 @@ def uploaded_model_button():
 
 getUserContext()
 model = None
-SAVE_DIR = os.path.join(".tmp", st.session_state.username, "uploads")
+SAVE_DIR = f".tmp/{st.session_state.username}/uploads"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 
