@@ -1,5 +1,9 @@
-weigths
-venv
-__pycache__
+/venv
+
+/weigths
+
 .tmp
 .bash_history
+
+*.pyc
+__pycache__

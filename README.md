@@ -12,8 +12,10 @@ Este projeto treina e executa uma aplicação de detecção de voz falsa usando 
 
 ## 🚀 Requisitos
 
-- Docker instalado
-- Python (para testes locais, opcional)
+- Docker version==XXXX
+- nvidia toolkit. Ex: sudo apt install nvidia-container-toolkit
+- ativar runtime nvida para seu docker: Ex: sudo nvidia-ctk runtime configure --runtime=docker
+- Python3.10 ou maior (para testes locais, opcional)
 
 ## 📁 Estrutura de Diretórios
 
