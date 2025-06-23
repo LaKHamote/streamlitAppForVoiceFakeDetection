@@ -62,7 +62,7 @@ class VoiceFakeDetection:
                 TrainingLogCallback,
                 GraphCallback,
             ]
-            all_callbacks.extend([eval(c) for c in callbacks if c.strip() != ""])
+            all_callbacks.extend(callbacks)
             self.model.fine_tune(num_epochs, cbs=all_callbacks)
 
             self.__save_model()
