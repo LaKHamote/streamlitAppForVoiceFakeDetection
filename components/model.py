@@ -48,7 +48,7 @@ class VoiceFakeDetection:
                 item_tfms=transform
             )
             st.session_state.dataset_info.info(f"✅ Selected {len(dls.train.dataset)+len(dls.valid.dataset)} images. Training will start soon!")
-            time.sleep(3)
+            time.sleep(1)
 
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
@@ -57,7 +57,13 @@ class VoiceFakeDetection:
             self.model_path = f"{self.save_path}/{architecture_name}_{transform_type}"
             os.makedirs(self.model_path, exist_ok=True)
             self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
-            self.model.fine_tune(num_epochs, cbs=[eval(callbacks), CSVLogger, TrainingLogCallback, GraphCallback])
+            all_callbacks = [
+                CSVLogger,
+                TrainingLogCallback,
+                GraphCallback,
+            ]
+            all_callbacks.extend([eval(c) for c in callbacks if c.strip() != ""])
+            self.model.fine_tune(num_epochs, cbs=all_callbacks)
 
             self.__save_model()
 
@@ -108,12 +114,19 @@ class VoiceFakeDetection:
         self.model.export("model.pkl")
         st.session_state.trained_model = f"{self.model_path}/model.pkl"
 
-        st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
+        st.success("✅ Training completed! Model saved in cache. Please download it on your Profile Page before finishing your session.")
         self.__empty_logs()
 
         model_buffer = io.BytesIO()
         with open(f"{self.model_path}/model.pkl", "rb") as file:
             model_buffer.write(file.read())
+        model_buffer.seek(0)
+        st.download_button(
+            label="📥 Download Model",
+            data=model_buffer,
+            file_name=f"{self.model_path}/model.pkl",
+            mime="application/octet-stream"
+        )
     
     def __losses_table(self):
         self.history_data = pd.read_csv(f"{self.model_path}/history.csv")

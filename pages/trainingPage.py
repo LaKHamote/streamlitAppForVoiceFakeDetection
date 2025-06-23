@@ -12,15 +12,31 @@ architecture_name = st.selectbox("Choose the architecture", list(model.architect
 # Transformation selection
 transform_type = st.selectbox("Choose the transformation", list(model.transforms.keys()))
 
-# Number of epochs and batches
+# Number of epochs 
 num_epochs = st.number_input("Number of Epochs", min_value=0, step=1, value=1)
+
+# Number of batches
 num_batches = st.number_input("Number of Batches", min_value=0, step=2, value=32)
 
-# Callbacks
-callbacks = st.text_input(
-    "Edit your Callback",
-    value="EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)",
-)
+# Inicializa lista de callbacks
+if "callbacks" not in st.session_state:
+    st.session_state.callbacks = ["EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)"]
+  
+# Botão para adicionar novo callback (estilo React)
+
+# Renderizar os inputs
+callbacks_values = []
+st.subheader("🧩 Callbacks")
+for i in range(len(st.session_state.callbacks)):
+    cb_value = st.text_input(
+        label=f"Callback {i+1}",
+        value=st.session_state.callbacks[i],
+        key=f"callback_input_{i}",
+    )
+    callbacks_values.append(cb_value)
+st.session_state.callbacks = callbacks_values
+
+st.button("➕ Add Callback", on_click=lambda: st.session_state.callbacks.append(""))
 
 default_datasets = {
   "Scottish man": "awb",
@@ -65,5 +81,5 @@ if st.button("Train"):
             selected_noises,
             num_epochs,
             num_batches,
-            callbacks
+            st.session_state.callbacks
         )
