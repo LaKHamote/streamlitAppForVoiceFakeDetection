@@ -74,6 +74,24 @@ class VoiceFakeDetection:
             
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
+
+    
+    def safe_eval_callback(self, callbacks: list) -> list:
+        safe_callbacks = []
+        for cb in callbacks:
+            cb = cb.strip()
+            if cb == "":
+                continue
+
+            cb = eval(cb)
+            
+            # Verifica se é uma instância de Callback
+            if not isinstance(cb, Callback):
+                raise Exception(f"'{cb}' is not a valid fastai Callback.")
+
+            safe_callbacks.append(cb)
+
+        return safe_callbacks
     
     def __init_logs(self):
         st.session_state.dataset_info = st.empty()

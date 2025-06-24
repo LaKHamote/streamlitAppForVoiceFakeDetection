@@ -1,100 +1,108 @@
 # 🎙️ Fake Voice Detection with FastAI & Streamlit
 
-Este projeto treina e executa uma aplicação de detecção de voz falsa usando aprendizado profundo com FastAI e uma interface interativa em Streamlit.
+This project develops and deploys a fake voice detection application using deep learning with FastAI and an interactive interface built with Streamlit.
 
-## 📦 Funcionalidades
+---
 
-- Treinamento de modelos baseados em Transfer Learning (VGG16, ResNet, etc.)
-- Interface interativa com Streamlit
-- Upload de arquivos `.wav` para detecção
-- Download do modelo treinado (`.pkl`)
-- Evita re-download de pesos usando volumes Docker
+## 📦 Features
 
-## 🚀 Requisitos
+- **Transfer Learning Model Training**: Supports training with various transfer learning models (e.g., VGG16, ResNet).
+- **Interactive Streamlit Interface**: Provides a user-friendly web interface for interaction.
+- **WAV File Upload**: Allows users to upload `.wav` audio files for fake voice detection.
+- **Trained Model Download**: Enables downloading of the trained model in `.pkl` format.
+- **Dockerized Application**: The entire application is containerized using Docker, ensuring consistent environments across different machines and simplifying deployment. This means you can run the app anywhere Docker is installed, without worrying about dependency conflicts.
 
-- Docker version==XXXX
-- nvidia toolkit. Ex: sudo apt install nvidia-container-toolkit
-- ativar runtime nvida para seu docker: Ex: sudo nvidia-ctk runtime configure --runtime=docker e depois reiniciar sudo systemctl restart docker
-- Python3.10 ou maior (para testes locais, opcional)
+---
 
-## 📁 Estrutura de Diretórios
+## 🚀 Requirements
 
-.
+- **Docker**: `version==XXXX`.
+- **NVIDIA Toolkit**: For GPU support. Example: `sudo apt install nvidia-container-toolkit`.
+- **NVIDIA Docker Runtime**: Configure Docker to use the NVIDIA runtime. Example: `sudo nvidia-ctk runtime configure --runtime=docker` followed by `sudo systemctl restart docker`.
+- **Python**: Version 3.10 or higher (optional for local testing).
 
-├── app.py                 → Aplicativo Streamlit
+---
 
-├── Dockerfile             → Container da aplicação
+## 📁 Directory Structure
 
-├── requirements.txt       → Dependências do projeto
-
-├── README.md              → Este arquivo
-
+```bash
+├── app.py                     → Streamlit application
+├── Dockerfile                 → Application container definition
+├── requirements.txt           → Project dependencies
+├── README.md                  → This README file
 └── ...
+```
 
-## ⚙️ Como usar (Linux)
+---
 
-### 1. Atualizar submodule
+## ⚙️ Usage (Linux)
 
-git submodule update --remote --merge
+### 1. Update Submodule
 
-### 1. Preparar o dataset default (precisa de scipy==1.10.1, librosa e parallel_wavegan instaldo)
+`git submodule update --remote --merge`
 
+### 2. Prepare Default Dataset
 
+To prepare the default dataset, execute the following command:
 
-source components/VoCoderRecognition/setup.sh
+`source components/VoCoderRecognition/setup.sh`
 
-O comando vai:
-    baixar os locutores(SPEAKERS) em "components/VoCoderRecognition/scripts/env.sh"
-    baixar os vocoders(VOCODER_TAGS) em "components/VoCoderRecognition/scripts/env.sh"
-    fazer remostragem de frequencia para 22050Hz(exigido pelos vocoders).
-    Agora vai gerar um novo audio para cada vocoder
-    Finalmente vai gerar um Espectrograma Mel para cada tanto de ruído adicionado (NOISE_LEVEL_LIST) em "components/VoCoderRecognition/scripts/env.sh"
+This script will perform the following actions:
 
-Caso queira usar seu próprio dataset, siga a organizacao do dataset default e altere o diretoria a ser montado no docker-compose.yaml(exemplo linha 11)
+- Download speakers (defined by `SPEAKERS`) from `components/VoCoderRecognition/scripts/env.sh`.
+- Download vocoders (defined by `VOCODER_TAGS`) from `components/VoCoderRecognition/scripts/env.sh`.
+- Resample audio frequencies to 22050Hz (required by vocoders).
+- Generate new audio for each vocoder.
+- Generate Mel Spectrograms for each noise level (defined by `NOISE_LEVEL_LIST`) in `components/VoCoderRecognition/scripts/env.sh`.
 
--seu_dataset
---ruido1
----locutor1
-----classe1
------image.png
-----classe2
----locutor2
---ruido2
-...
+If you wish to use your own dataset, please follow the organizational structure of the default dataset and modify the dataset directory to be mounted in `docker-compose.yaml` (e.g., line 11 in the example of yaml below).
 
+```bash
+your_dataset/
+├── noise1/
+│   ├── speaker1/
+│   │   ├── class1/
+│   │   │   └── image.png
+│   │   └── class2/
+│   └── speaker2/
+└── noise2/
+    └── ...
+```
 
-### 2. Build com Docker Compose
+### 3. Build with Docker Compose
 
-Crie um volume para reusar os pesos baixados:
+Create a Docker volume to reuse downloaded weights:
 
-Exemplo de docker-compose.yml:
+Example `docker-compose.yml`:
 
-version: "3.8"
-
+```yaml
 services:
+  app:
+    build: .
+    ports:
+      - your_open_port:8501 # Replace 'your_open_port' with your desired port
+    volumes:
+      - .:/app
+      - ./your_dataset:/dataset # You can change the dataset folder mount path to your desired location with the dataset in the correct format
+      - ~/.cache/torch/hub:/root/.cache/torch/hub # This prevents re-downloading weights after training
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+    runtime: nvidia # Enable GPU support`
+```
 
-app:
+### 4. Start the Application
 
-build: .
+Execute the following command in your terminal:
 
-ports:
+Bash
 
-- "8501:8501"
+`docker compose up --build`
 
-volumes:
+---
 
-- ./your_personal_dataset:/dataset  # Pode alterar a montagem da pasta dataset para o caminho que quiser com o dataset no formato correto
-- ~/.cache/torch/hub:/root/.cache/torch/hub  # Isso evita o redownload dos pesos depois de um treinamento
+## 🧠 Available Models
 
-### 3. Suba o app
-
-Execute no terminal:
-
-docker compose up --build
-
-## 🧠 Modelos disponíveis
-
-Você pode escolher entre os seguintes modelos de arquitetura para o treinamento:
+You can select from the following deep learning architectures for model training:
 
 - VGG16
 - VGG19
@@ -103,24 +111,29 @@ Você pode escolher entre os seguintes modelos de arquitetura para o treinamento
 - ResNet50
 - AlexNet
 
-## 💾 Download do Trainamento
+---
 
-Após o treinamento, será possível:
+## 💾 Training Download Options
 
-- Ver o histórico de loss e baixá-lo (como gráfico e csv)
-- Fazer download do modelo `.pkl`
-- Baixar confusion matrix
+After training, the following options will be available:
 
-## 🧪 Testar com Áudio
+- View and download the loss history (as a graph and CSV).
+- Download the trained model in `.pkl` format.
+- Download the confusion matrix.
 
-Após treinar ou carregar um modelo:
+---
 
-0. (Opcional) Faça upload de um modelo seu
-1. Faça upload de um arquivo `.wav`
-2. Veja a predição
-3. Confira as probabilidades de cada classe
+## 🧪 Audio Testing
 
+Once a model is trained or loaded:
 
-## 📄 Licença
+1. (Optional) Upload your own model.
+2. Upload a `.wav` audio file.
+3. View the prediction result.
+4. Examine the probabilities for each class.
 
-MIT © Lucas ??
+---
+
+## 📄 License
+
+MIT © Lucas ???

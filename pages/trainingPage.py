@@ -37,6 +37,13 @@ with st.expander("🧩 Callbacks"):
     st.button("➕ Add Callback", on_click=lambda: st.session_state.callbacks.append(""))
 st.session_state.valid_callbacks = st.empty()
 
+        
+try:
+    safe_callbacks = model.safe_eval_callback(st.session_state.callbacks)
+except Exception as e:
+    st.session_state.valid_callbacks.error(f"❌ Error in callback: {str(e)}")
+    safe_callbacks = None
+
 
 default_datasets = {
   "Scottish man": "awb",
@@ -54,43 +61,21 @@ selected_speakers = [default_datasets[spk] for spk in st.multiselect(
 )]
 st.session_state.select_speaker = st.empty()
 
-noise_labels = {
+default_noise_labels = {
     "Extremely noisy": 10,
     "A lot of noise": 1,
     "Moderate noise": 0.1,
     "Low noise": 0.01,
     "Very low noise": 0.001,
     "No noise": 0
-} # NOISES from components/VoCoderRecognition/scripts/env.sh 
+} # NOISE_LEVEL_LIST from components/VoCoderRecognition/scripts/env.sh 
 
-selected_noises = [noise_labels[spk] for spk in st.multiselect(
+selected_noises = [default_noise_labels[spk] for spk in st.multiselect(
     "🌪️ Choose how much noise you want to train with.", 
-    list(noise_labels.keys()),
+    list(default_noise_labels.keys()),
     default=["No noise"]
 )]
 
-def safe_eval_callback(callbacks: list) -> list:
-    safe_callbacks = []
-    for cb in callbacks:
-        cb = cb.strip()
-        if cb == "":
-            continue
-
-        cb = eval(cb)
-        
-        # Verifica se é uma instância de Callback
-        if not isinstance(cb, Callback):
-            raise Exception(f"'{cb}' is not a valid fastai Callback.")
-
-        safe_callbacks.append(cb)
-
-    return safe_callbacks
-        
-try:
-    safe_callbacks = safe_eval_callback(st.session_state.callbacks)
-except Exception as e:
-    st.session_state.valid_callbacks.error(f"❌ Error in callback: {str(e)}")
-    safe_callbacks = None
 
     
 # Training button

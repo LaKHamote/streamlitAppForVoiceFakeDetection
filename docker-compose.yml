@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "443:8501"
+      - 443:8501
     volumes:
       - .:/app
       - ~/.cache/torch/hub:/root/.cache/torch/hub # Cache of all weights to  avoid re-downloading
