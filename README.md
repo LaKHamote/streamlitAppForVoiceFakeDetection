@@ -47,35 +47,21 @@ O comando vai:
     baixar os locutores(SPEAKERS) em "components/VoCoderRecognition/scripts/env.sh"
     baixar os vocoders(VOCODER_TAGS) em "components/VoCoderRecognition/scripts/env.sh"
     fazer remostragem de frequencia para 22050Hz(exigido pelos vocoders).
-    finalmente vai gerar um novo audio para cada vocoder
-    TODO: seu Espectrograma Mel
+    Agora vai gerar um novo audio para cada vocoder
+    Finalmente vai gerar um Espectrograma Mel para cada tanto de ruído adicionado (NOISE_LEVEL_LIST) em "components/VoCoderRecognition/scripts/env.sh"
 
-Caso queira usar seu próprio dataset, siga a organizacao do dataset default:
+Caso queira usar seu próprio dataset, siga a organizacao do dataset default e altere o diretoria a ser montado no docker-compose.yaml(exemplo linha 11)
 
 -seu_dataset
---
+--ruido1
+---locutor1
+----classe1
+-----image.png
+----classe2
+---locutor2
+--ruido2
+...
 
-
-
-
-
-### 1. Baixar os pesos dos modelos (localmente)
-
-Execute localmente para baixar os pesos:
-
-Importe as bibliotecas:
-
-from fastai.vision.all import *
-
-Crie os dados fictícios:
-
-dls = ImageDataLoaders.from_empty(size=(224, 224), bs=64, num_workers=0)
-
-Baixe os pesos:
-
-for arch in [vgg16, vgg19, resnet18, resnet34, resnet50, alexnet]:
-
-vision_learner(dls, arch=arch)
 
 ### 2. Build com Docker Compose
 
@@ -97,7 +83,8 @@ ports:
 
 volumes:
 
-- ~/.cache/torch/hub:/root/.cache/torch/hub
+- ./your_personal_dataset:/dataset  # Pode alterar a montagem da pasta dataset para o caminho que quiser com o dataset no formato correto
+- ~/.cache/torch/hub:/root/.cache/torch/hub  # Isso evita o redownload dos pesos depois de um treinamento
 
 ### 3. Suba o app
 
@@ -116,27 +103,24 @@ Você pode escolher entre os seguintes modelos de arquitetura para o treinamento
 - ResNet50
 - AlexNet
 
-## 💾 Download do Modelo
+## 💾 Download do Trainamento
 
 Após o treinamento, será possível:
 
-- Ver o histórico de loss
+- Ver o histórico de loss e baixá-lo (como gráfico e csv)
 - Fazer download do modelo `.pkl`
+- Baixar confusion matrix
 
 ## 🧪 Testar com Áudio
 
 Após treinar ou carregar um modelo:
 
+0. (Opcional) Faça upload de um modelo seu
 1. Faça upload de um arquivo `.wav`
 2. Veja a predição
 3. Confira as probabilidades de cada classe
 
-## 🛠️ Manutenção
-
-Caso precise limpar os modelos:
-
-rm -rf ~/.cache/torch/hub/checkpoints
 
 ## 📄 Licença
 
-MIT © Lucas
+MIT © Lucas ??
