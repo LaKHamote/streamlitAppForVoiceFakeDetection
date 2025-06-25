@@ -1,4 +1,5 @@
 from components.model import VoiceFakeDetection
+from utils.config import load_env_from_sh
 from fastai.vision.all import *
 import streamlit as st
 
@@ -45,39 +46,53 @@ except Exception as e:
     safe_callbacks = None
 
 
-default_datasets = {
+default_speakers = {
   "Scottish man": "awb",
   "American man 1": "bdl",
   "American man 2": "rms",
   "American woman 1": "clb",
   "American woman 2": "slt",
   "Canadian man": "jmk",
-  "Indian man": "ksp"
+  "Indian man": "ksp",
 } # SPEAKERS from components/VoCoderRecognition/scripts/env.sh 
 
-selected_speakers = [default_datasets[spk] for spk in st.multiselect(
-    "🗣️ Choose one or more of our datasets", 
-    list(default_datasets.keys())
-)]
-st.session_state.select_speaker = st.empty()
-
-default_noise_labels = {
+default_noises = {
     "Extremely noisy": 10,
     "A lot of noise": 1,
     "Moderate noise": 0.1,
     "Low noise": 0.01,
     "Very low noise": 0.001,
-    "No noise": 0
+    "No noise": 0,
 } # NOISE_LEVEL_LIST from components/VoCoderRecognition/scripts/env.sh 
 
-selected_noises = [default_noise_labels[spk] for spk in st.multiselect(
+env_speakers, env_noises = load_env_from_sh()
+
+speakers = default_speakers | {
+    code: code
+    for code in env_speakers
+    if code not in default_speakers.values()
+} # Merge default speakers with adicional environment speakers
+
+noises = default_noises | {
+    code: code
+    for code in env_noises
+    if code not in default_noises.values()
+} # Merge default noises with adicional environment noises
+
+
+selected_speakers = [speakers[spk] for spk in st.multiselect(
+    "🗣️ Choose one or more of our datasets", 
+    list(speakers.keys())
+)]
+st.session_state.select_speaker = st.empty()
+
+
+selected_noises = [noises[spk] for spk in st.multiselect(
     "🌪️ Choose how much noise you want to train with.", 
-    list(default_noise_labels.keys()),
+    list(noises.keys()),
     default=["No noise"]
 )]
 
-
-    
 # Training button
 if st.button("🚀 Train"):
     if not selected_speakers:

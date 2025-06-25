@@ -37,14 +37,16 @@ This project develops and deploys a fake voice detection application using deep 
 
 ## ⚙️ Usage (Linux)
 
-### 1. Update Submodule
+### 1. Clone the Repository (with Submodule)
 
-`git submodule update --remote --merge`
+`git clone --recurse-submodules https://github.com/LaKHamote/streamlitAppForVoiceFakeDetection.git`
+cd streamlitAppForVoiceFakeDetection
 
 ### 2. Prepare Default Dataset
 
-To prepare the default dataset, execute the following command:
+To prepare the default dataset, execute the following commands:
 
+`pip install -r requirements_min.txt`
 `source components/VoCoderRecognition/setup.sh`
 
 This script will perform the following actions:
@@ -55,18 +57,21 @@ This script will perform the following actions:
 - Generate new audio for each vocoder.
 - Generate Mel Spectrograms for each noise level (defined by `NOISE_LEVEL_LIST`) in `components/VoCoderRecognition/scripts/env.sh`.
 
-If you wish to use your own dataset, please follow the organizational structure of the default dataset and modify the dataset directory to be mounted in `docker-compose.yaml` (e.g., line 11 in the example of yaml below).
+If you wish to use your own dataset, please follow the organizational structure of the default dataset and modify the dataset directory to be mounted in `docker-compose.yaml` (e.g., line 11 in the example of yaml below) and change the variables in `components/VoCoderRecognition/scripts/env.sh` accordingly.
 
 ```bash
 your_dataset/
 ├── noise1/
 │   ├── speaker1/
 │   │   ├── class1/
-│   │   │   └── image.png
-│   │   └── class2/
-│   └── speaker2/
-└── noise2/
-    └── ...
+│   │   │   │── image.png
+│   │   │   └── ...
+│   │   │── class2/
+│   │   └── ...
+│   │── speaker2/
+│   └── ...
+│── noise2/
+└── ...
 ```
 
 ### 3. Build with Docker Compose
