@@ -1,4 +1,4 @@
-# 🎙️ Fake Voice Detection with FastAI & Streamlit
+# 🤖 Fake Voice Detection with FastAI & Streamlit
 
 This project develops and deploys a fake voice detection application using deep learning with FastAI and an interactive interface built with Streamlit.
 
