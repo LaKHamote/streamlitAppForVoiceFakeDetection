@@ -8,44 +8,47 @@ st.title("Computer Vision Model Training for AudioFake Detection")
 # Initialize the model
 model = VoiceFakeDetection()
 
-# Architecture selection
-architecture_name = st.selectbox("🛠️ Choose the architecture", list(model.architectures.keys()))
+st.header("Model Training Configuration")
+col1, col2 = st.columns(2)
 
-# Transformation selection
-transform_type = st.selectbox("🔄 Choose the transformation", list(model.transforms.keys()))
+with col1:
+    # Architecture selection
+    architecture_name = st.selectbox(
+        "🛠️ Choose the Architecture",
+        list(model.architectures.keys()),
+        help="Select the Convolutional Neural Network (CNN) architecture for training."
+    )
 
-# Number of epochs 
-num_epochs = st.number_input("⏳ Number of Epochs", min_value=0, step=1, value=1)
+    # Transformation selection
+    transform_type = st.selectbox(
+        "🔄 Choose the Spectrogram Transformation",
+        list(model.transforms.keys()),
+        help="Select the type of image transformation to apply to the audio data."
+    )
 
-# Number of batches
-num_batches = st.number_input("🧺 Number of Batches", min_value=0, step=2, value=32)
+with col2:
+    # Number of epochs
+    num_epochs = st.number_input(
+        "⏳ Number of Epochs",
+        min_value=1,
+        step=1,
+        value=1,
+        help="Define the total number of training iterations over the entire dataset." \
+            "A higher number can lead to better model performance, but also increases training time."
+    )
 
-# Inicializa lista de callbacks
-if "callbacks" not in st.session_state:
-    st.session_state.callbacks = ["EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)"]
+    # Number of batches
+    num_batches = st.number_input(
+        "🧺 Batch Size",
+        min_value=1,
+        step=2,
+        value=32,
+        help="Specify the number of samples processed before the model's internal parameters are updated." \
+            "A larger batch size can speed up training but requires more memory."
+    )
 
-callbacks_values = []
-with st.expander("🧩 Callbacks"):
-    for i in range(len(st.session_state.callbacks)):
-        cb_value = st.text_input(
-            label=f"Callback {i+1}",
-            value=st.session_state.callbacks[i],
-            key=f"callback_input_{i}",
-        )
-        callbacks_values.append(cb_value)
-    st.session_state.callbacks = callbacks_values
-
-    st.button("➕ Add Callback", on_click=lambda: st.session_state.callbacks.append(""))
-st.session_state.valid_callbacks = st.empty()
-
-        
-try:
-    safe_callbacks = model.safe_eval_callback(st.session_state.callbacks)
-except Exception as e:
-    st.session_state.valid_callbacks.error(f"❌ Error in callback: {str(e)}")
-    safe_callbacks = None
-
-
+######################################
+st.header("Dataset Configuration")
 default_speakers = {
   "Scottish man": "awb",
   "American man 1": "bdl",
@@ -82,7 +85,9 @@ noises = default_noises | {
 
 selected_speakers = [speakers[spk] for spk in st.multiselect(
     "🗣️ Choose one or more of our datasets", 
-    list(speakers.keys())
+    list(speakers.keys()),
+    help="Select the speakers you want to use for training. " \
+         "You can choose multiple speakers to create a diverse training dataset.",
 )]
 st.session_state.select_speaker = st.empty()
 
@@ -90,8 +95,38 @@ st.session_state.select_speaker = st.empty()
 selected_noises = [noises[spk] for spk in st.multiselect(
     "🌪️ Choose how much noise you want to train with.", 
     list(noises.keys()),
-    default=["No noise"]
+    default=["No noise"],
+    help="Select the noise levels to apply to the audio data during training. " \
+         "You can choose multiple noise levels to simulate different conditions."
 )]
+
+######################################
+st.header("Advanced Configuration")
+# Inicializa lista de callbacks
+if "callbacks" not in st.session_state:
+    st.session_state.callbacks = ["EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)"]
+
+callbacks_values = []
+with st.expander("🧩 Callbacks"):
+    for i in range(len(st.session_state.callbacks)):
+        cb_value = st.text_input(
+            label=f"Callback {i+1}",
+            value=st.session_state.callbacks[i],
+            key=f"callback_input_{i}",
+            help="Enter a valid fastai Callback. For example: `EarlyStoppingCallback(monitor='f1_score', min_delta=0.0001, patience=10)`"
+        )
+        callbacks_values.append(cb_value)
+    st.session_state.callbacks = callbacks_values
+
+    st.button("➕ Add Callback", on_click=lambda: st.session_state.callbacks.append(""))
+st.session_state.valid_callbacks = st.empty()
+
+        
+try:
+    safe_callbacks = model.safe_eval_callback(st.session_state.callbacks)
+except Exception as e:
+    st.session_state.valid_callbacks.error(f"❌ Error in callback: {str(e)}")
+    safe_callbacks = None
 
 # Training button
 if st.button("🚀 Train"):
