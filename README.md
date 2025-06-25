@@ -39,15 +39,24 @@ This project develops and deploys a fake voice detection application using deep 
 
 ### 1. Clone the Repository (with Submodule)
 
-`git clone --recurse-submodules https://github.com/LaKHamote/streamlitAppForVoiceFakeDetection.git`
+```bash
+git clone --recurse-submodules https://github.com/LaKHamote/streamlitAppForVoiceFakeDetection.git
 cd streamlitAppForVoiceFakeDetection
+```
+
+### 1.1 Update submodule (opcional)
+
+`git submodule update --remote --merge`
 
 ### 2. Prepare Default Dataset
 
 To prepare the default dataset, execute the following commands:
 
-`pip install -r requirements_min.txt`
-`source components/VoCoderRecognition/setup.sh`
+```bash
+pip install -r requirements_min.txt
+source components/VoCoderRecognition/setup.sh
+```
+
 
 This script will perform the following actions:
 
