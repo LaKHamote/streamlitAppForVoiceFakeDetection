@@ -48,7 +48,7 @@ class VoiceFakeDetection:
                 item_tfms=transform
             )
             st.session_state.dataset_info.info(f"✅ Selected {len(dls.train.dataset)+len(dls.valid.dataset)} images. Training will start soon!")
-            time.sleep(1)
+            time.sleep(3)
 
         except Exception as e:
             st.error(f"Error loading data: {str(e)}")
@@ -57,13 +57,7 @@ class VoiceFakeDetection:
             self.model_path = f"{self.save_path}/{architecture_name}_{transform_type}"
             os.makedirs(self.model_path, exist_ok=True)
             self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
-            all_callbacks = [
-                CSVLogger,
-                TrainingLogCallback,
-                GraphCallback,
-            ]
-            all_callbacks.extend(callbacks)
-            self.model.fine_tune(num_epochs, cbs=all_callbacks)
+            self.model.fine_tune(num_epochs, cbs=[eval(callbacks), CSVLogger, LogCallback, GraphCallback])
 
             self.__save_model()
 
@@ -74,24 +68,6 @@ class VoiceFakeDetection:
             
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
-
-    
-    def safe_eval_callback(self, callbacks: list) -> list:
-        safe_callbacks = []
-        for cb in callbacks:
-            cb = cb.strip()
-            if cb == "":
-                continue
-
-            cb = eval(cb)
-            
-            # Verifica se é uma instância de Callback
-            if not isinstance(cb, Callback):
-                raise Exception(f"'{cb}' is not a valid fastai Callback.")
-
-            safe_callbacks.append(cb)
-
-        return safe_callbacks
     
     def __init_logs(self):
         st.session_state.dataset_info = st.empty()
@@ -115,6 +91,19 @@ class VoiceFakeDetection:
             self.model.recorder.plot_loss(ax=ax)
             plt.savefig(f"{self.model_path}/results.png", bbox_inches="tight", format='png')
             st.pyplot(fig, use_container_width=False)
+
+            img_buffer = io.BytesIO()
+            plt.savefig(img_buffer, bbox_inches="tight", format='png')
+            img_buffer.seek(0)
+            st.download_button(
+                key="download_results",
+                label="📥 Download Confusion Matrix", 
+                data=img_buffer, 
+                file_name="confusion_matrix.png", 
+                mime="image/png"
+            )
+
+
             
 
         with col2:
@@ -127,22 +116,30 @@ class VoiceFakeDetection:
             plt.savefig(img_buffer, format='png')
             img_buffer.seek(0)
             st.image(img_buffer, use_container_width=True)
+            
+            st.download_button(
+                key="download_confusion_matrix",
+                label="📥 Download Confusion Matrix", 
+                data=img_buffer, 
+                file_name="confusion_matrix.png", 
+                mime="image/png"
+            )
     
     def __save_model(self):
         self.model.export("model.pkl")
         st.session_state.trained_model = f"{self.model_path}/model.pkl"
 
-        st.success("✅ Training completed! Model saved in cache. Please download it on your Profile Page before finishing your session.")
+        st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
         self.__empty_logs()
 
         model_buffer = io.BytesIO()
         with open(f"{self.model_path}/model.pkl", "rb") as file:
-            model_buffer.write(file.read())
+            model_buffer.write(file.read())  
         model_buffer.seek(0)
         st.download_button(
-            label="📥 Download Model",
-            data=model_buffer,
-            file_name=f"{self.model_path}/model.pkl",
+            label="🚀 Download Model", 
+            data=model_buffer, 
+            file_name="model.pkl", 
             mime="application/octet-stream"
         )
     
@@ -152,11 +149,20 @@ class VoiceFakeDetection:
 
         csv_buffer =  io.BytesIO()
         self.history_data.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+        # Display loss values
+
+        st.download_button(
+            label="📉 Export table", 
+            data=csv_buffer, 
+            file_name="loss_values.csv", 
+            mime="text/csv"
+        )
 
 def label_func(f): 
     return f.parent.name
 
-class TrainingLogCallback(Callback):
+class LogCallback(Callback):
     def after_batch(self):
         if self.training:
             batch = self.iter
@@ -172,8 +178,8 @@ class TrainingLogCallback(Callback):
 class GraphCallback(Callback):
     def after_loss(self):
         fig, ax = plt.subplots(figsize=(4, 4))
-        self.recorder.plot_loss(ax=ax, show_epochs=True)
+
+ax.set_ylim(0, max(1, ax.get_ylim()[1]))        self.recorder.plot_loss(ax=ax, show_epochs=True)
         ax.set_ylim(0, max(1, ax.get_ylim()[1]))
         plt.tight_layout()
         st.session_state.graph.pyplot(fig, use_container_width=False)
-        plt.close(fig)
