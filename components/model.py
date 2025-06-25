@@ -132,7 +132,8 @@ class VoiceFakeDetection:
         self.model.export("model.pkl")
         st.session_state.trained_model = f"{self.model_path}/model.pkl"
 
-        st.success("✅ Training completed! Model saved in cache. Please download it on your Profile Page before finishing your session.")
+        st.success("✅ Training completed! Model saved in cache. Please download it before finishing your session.")
+        st.info("All logs and results will be saved in the same folder as the model. You can download them in your Profile Page.")
         self.__empty_logs()
 
         model_buffer = io.BytesIO()
@@ -147,11 +148,12 @@ class VoiceFakeDetection:
         )
     
     def __losses_table(self):
-        self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
-        st.table(self.history_data)
+        with st.expander("📊 Training Statistics", expanded=False):
+            self.history_data = pd.read_csv(f"{self.model_path}/history.csv")
+            st.table(self.history_data)
 
-        csv_buffer =  io.BytesIO()
-        self.history_data.to_csv(csv_buffer, index=False)
+            csv_buffer =  io.BytesIO()
+            self.history_data.to_csv(csv_buffer, index=False)
 
 def label_func(f): 
     return f.parent.name
