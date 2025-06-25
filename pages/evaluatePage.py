@@ -84,7 +84,8 @@ if model is not None:
             use_container_width=False,
             caption=f"Mel Spectrogram of the audio: {os.path.splitext(uploaded_audio.name)[0]}"
         )
-
+        
+        ######################################
         st.markdown("---")
         st.subheader("Analysis Results:")
 
