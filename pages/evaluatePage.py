@@ -95,11 +95,16 @@ if model is not None:
 
         pred, pred_idx, probs = model.predict(test_image)
         class_labels = model.dls.vocab
-
-
         predicted_class_name = class_labels[pred_idx.item()]
-        
-        if predicted_class_name == "bonafide": # Checar se é humano
+
+        CONFIDENCE_THRESHOLD = 0.6 # TODO: Talvez seja interessante deixar o usuário escolher esse valor ou colocar a soma dos demais classes
+
+        conf =  probs[pred_idx.item()]
+        if conf < CONFIDENCE_THRESHOLD:
+            st.warning("## ⚖️ Analysis Inconclusive!")
+            st.write(f"The model has identified a most probable class as **{predicted_class_name.replace('vocoder_', 'Vocoder ')}** with a probability of **{conf:.2%}**. However, its confidence level for this prediction is below our threshold.")
+            st.write("This could indicate that the audio has ambiguous characteristics, or it falls between learned categories. Further human inspection might be required.")
+        elif predicted_class_name == "bonafide": # Checar se é humano
             st.success("### ✅ This audio is classified as **HUMAN**!")
             st.write("Based on our AI model's analysis, this audio exhibits characteristics consistent with un-synthesized human speech.")
         else: # Checar se é sintetizado
@@ -114,7 +119,7 @@ if model is not None:
         st.subheader("Metrics:")
 
         st.metric(label="🔍 **Most Probable Prediction**", value=f"Class {pred_idx.item()}: {predicted_class_name}")
-        st.metric(label="📊 **Probability of Main Prediction**", value=f"{probs[pred_idx.item()]:.2%}")
+        st.metric(label="📊 **Probability of Main Prediction**", value=f"{conf:.2%}")
 
         with st.expander("### 📈 Full Probability Distribution:"):
             df = pd.DataFrame({
