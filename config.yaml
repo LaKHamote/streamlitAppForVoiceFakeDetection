@@ -26,11 +26,20 @@ credentials:
       failed_login_attempts: 0
       first_name: Lucas
       last_name: C. Boaventura
-      logged_in: true
+      logged_in: false
       password: $2b$12$AzZsdnvH5Qpflf/H.U/RNegg2p81HTieiJaoDjzRhD.c.4RelQRUS
       password_hint: Ll12345$
       roles:
       - admin
+    newuser001:
+      email: user@gmail.com
+      failed_login_attempts: 0
+      first_name: New
+      last_name: User
+      logged_in: true
+      password: $2b$12$79F7VsEgZ4SklvWy7QtGu.rKsqzAQ803YyY74IXjzYkEuZkHaS0dq
+      password_hint: Meu nome e uma sequencia
+      roles: null
     vidal:
       email: vidal@gmail.com
       failed_login_attempts: 0
