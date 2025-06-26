@@ -8,6 +8,12 @@ st.title("Computer Vision Model Training for AudioFake Detection")
 # Initialize the model
 model = VoiceFakeDetection()
 
+user_model_name = st.text_input(
+    "🏷️ Enter a name for this training run (optional):",
+    value="",
+    help="Provide a unique name to identify this specific training experiment. If left blank, a default name will be generated."
+)
+
 st.header("Model Training Configuration")
 col1, col2 = st.columns(2)
 
@@ -134,6 +140,7 @@ if st.button("🚀 Train"):
         st.session_state.select_speaker.warning("⚠️ Please select at least one dataset before training.")
     elif safe_callbacks is not None:
         model.train_model(
+            user_model_name,
             architecture_name,
             transform_type,
             selected_speakers,

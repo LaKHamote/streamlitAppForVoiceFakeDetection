@@ -24,8 +24,10 @@ class VoiceFakeDetection:
         os.makedirs(self.save_path, exist_ok=True)
 
 
-    def train_model(self, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
+    def train_model(self, user_model_name, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
         self.__init_logs()
+
+        self.user_model_name = None if user_model_name.strip()=="" else user_model_name.strip()
 
         if architecture_name not in self.architectures:
             st.warning("Architecture not suported.")
@@ -54,7 +56,10 @@ class VoiceFakeDetection:
             st.error(f"Error loading data: {str(e)}")
 
         try:
-            self.model_path = f"{self.save_path}/{architecture_name}_{transform_type}"
+            if self.user_model_name:
+                self.model_path = f"{self.save_path}/{self.user_model_name}"
+            else:
+                self.model_path = f"{self.save_path}/model_{architecture_name}_{transform_type}"
             os.makedirs(self.model_path, exist_ok=True)
             self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
             all_callbacks = [
@@ -143,7 +148,7 @@ class VoiceFakeDetection:
         st.download_button(
             label="📥 Download Model",
             data=model_buffer,
-            file_name=f"{self.model_path}/model.pkl",
+            file_name=f"model.pkl" if self.user_model_name is None else self.user_model_name + ".pkl",
             mime="application/octet-stream"
         )
     
