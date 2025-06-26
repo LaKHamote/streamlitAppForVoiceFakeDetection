@@ -38,7 +38,7 @@ if options:
         mime="application/octet-stream"
     )
     
-    with st.expander("Show Training Summary", value=False):
+    with st.expander("Show Training Summary", expanded=False):
         history_data = pd.read_csv(f"{model_path}/{options}/history.csv")
         st.table(history_data)
 
