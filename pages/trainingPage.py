@@ -2,6 +2,7 @@ from components.model import VoiceFakeDetection
 from utils.config import load_env_from_sh
 from fastai.vision.all import *
 import streamlit as st
+import multiprocessing
 
 st.title("Computer Vision Model Training for AudioFake Detection")
 
@@ -149,4 +150,32 @@ if st.button("🚀 Train"):
             num_batches,
             safe_callbacks
         )
+
+
+# Training button
+if st.button("🚀 Save New Version (Beta)"):
+    if not selected_speakers:
+        st.session_state.select_speaker.warning("⚠️ Please select at least one dataset before training.")
+    elif safe_callbacks is not None:
+        p = multiprocessing.Process(
+            target=model.train_model,
+            args=(
+                user_model_name,
+                architecture_name,
+                transform_type,
+                selected_speakers,
+                selected_noises,
+                num_epochs,
+                num_batches,
+                safe_callbacks,
+            )
+        )
+        p.start()
+        st.info("Training started in the background." \
+            "You can check the results in your profile page once it's done."
+        )
+        p.join()
+        st.success("✅ Training completed successfully!")
+
+        
 
