@@ -247,7 +247,20 @@ class TrainingLogCallback(Callback):
         st.session_state.training_out.code(f"Epoch {self.epoch} complete!")
 
 class GraphCallback(Callback):
+    update_frequency = .2
+    
     def before_epoch(self):
+        self._update_graph()
+        self.total_batches = len(self.dls.train)
+        self.next_update = int(self.update_frequency * self.total_batches)
+
+    def after_batch(self):
+        current_batch = self.iter
+        if current_batch >= self.next_update:
+            self._update_graph()
+            self.next_update += int(self.update_frequency * self.total_batches)
+
+    def _update_graph(self):
         fig, ax = plt.subplots(figsize=(4, 4))
         self.recorder.plot_loss(ax=ax, show_epochs=True)
         ax.set_ylim(0, max(1, ax.get_ylim()[1]))
