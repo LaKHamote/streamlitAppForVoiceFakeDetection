@@ -20,7 +20,7 @@ class VoiceFakeDetection:
 
         # sys.stdout = StreamlitLogger()
         getUserContext() # reload user context between sessions(refresh)
-        self.save_path = f".tmp/{st.session_state.username}"
+        self.save_path = f"database/{st.session_state.username}"
         os.makedirs(self.save_path, exist_ok=True)
 
 
@@ -186,7 +186,7 @@ class VoiceFakeDetection:
 
         with col1:
             st.subheader("📉 Training & Validation Loss")
-            fig, ax = plt.subplots(figsize=(3, 3.314))
+            fig, ax = plt.subplots()
             self.model.recorder.plot_loss(ax=ax)
             plt.savefig(f"{self.model_path}/results.png", bbox_inches="tight", format='png')
             st.pyplot(fig, use_container_width=False)
@@ -196,7 +196,7 @@ class VoiceFakeDetection:
             st.subheader("🔢 Confusion Matrix")
             interp = ClassificationInterpretation.from_learner(self.model)
             img_buffer = io.BytesIO()
-            interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
+            interp.plot_confusion_matrix(figsize=(7, 7), normalize=True)
             plt.savefig(f"{self.model_path}/confusion_matrix.png", format='png')
 
             plt.savefig(img_buffer, format='png')

@@ -175,6 +175,7 @@ if st.button("🚀 Save New Version (Beta)"):
             "You can check the results in your profile page once it's done."
         )
         p.join()
+        print("✅ Training completed successfully!")
         st.success("✅ Training completed successfully!")
 
         
