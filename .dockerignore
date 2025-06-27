@@ -4,7 +4,7 @@
 weigths
 venv
 __pycache__
-.tmp
+database
 .bash_history
 components/VoCoderRecognition/dataset/
 components/VoCoderRecognition/vocoder-models/

@@ -21,7 +21,7 @@ def uploaded_model_button():
 
 getUserContext()
 model = None
-SAVE_DIR = f".tmp/{st.session_state.username}/uploads"
+SAVE_DIR = f"database/{st.session_state.username}/uploads"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 

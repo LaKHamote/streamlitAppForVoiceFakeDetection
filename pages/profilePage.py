@@ -22,7 +22,7 @@ else:
 
 st.info("Notice that this is saved temporarily, so you should download it before finishing your session.")
 
-model_path = f".tmp/{st.session_state.username}"
+model_path = f"database/{st.session_state.username}"
 os.makedirs(model_path, exist_ok=True)
 options = st.radio("Choose a model:", [d for d in os.listdir(model_path) for m in os.listdir(f"{model_path}/{d}") if m.endswith(".pkl")])
 
