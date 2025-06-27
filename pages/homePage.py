@@ -6,14 +6,11 @@ st.title("VoiceFake Detection")
 
 Login(False)
 
-with open("pages/styles.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
 st.write("Please choose on of the following options:")
-
-
-if st.button("Import my own model", key="to_import"):
-    st.switch_page("pages/profilePage.py")
 
 if st.button("Train a model from my dataset", key="to_training"):
     st.switch_page("pages/trainingPage.py")
+    
+if st.button("Import my own model", key="to_import"):
+    st.switch_page("pages/profilePage.py")
+
