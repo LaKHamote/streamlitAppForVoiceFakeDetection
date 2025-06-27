@@ -25,6 +25,9 @@ class VoiceFakeDetection:
 
 
     def train_model(self, user_model_name, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
+        """ This method is used to train the model.
+        It is called by the Streamlit app when the user clicks the 'Train' button.
+        """
         self.__init_logs()
 
         self.user_model_name = None if user_model_name.strip()=="" else user_model_name.strip()
@@ -79,6 +82,73 @@ class VoiceFakeDetection:
             
         except Exception as e:
             st.error(f"Error in training: {str(e)}")
+
+    
+    def background_training(self, user_model_name, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
+        """
+        This method is used to train the model in the background.
+        It is called by the Streamlit app when the user clicks the 'Save Version' button.
+        """
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+
+        self.user_model_name = None if user_model_name.strip()=="" else user_model_name.strip()
+
+        if architecture_name not in self.architectures:
+            return
+
+        if transform_type in self.transforms:
+            transform = self.transforms[transform_type]
+        else:
+            return
+
+        try:
+            dataset_path = "/dataset"
+            tmp_paths=[f"{dataset_path}/{noise}/{spk}" for spk in selected_speakers for noise in selected_noises]
+
+            dls = ImageDataLoaders.from_path_func(
+                path=".",
+                fnames=[f for path in tmp_paths for f in get_image_files(Path(path))],
+                label_func=label_func,
+                bs=num_batches,
+                valid_pct=0.3,
+                item_tfms=transform
+            )
+
+        except Exception:
+            return
+
+        try:
+            if self.user_model_name:
+                self.model_path = f"{self.save_path}/{self.user_model_name}"
+            else:
+                self.model_path = f"{self.save_path}/model_{architecture_name}_{transform_type}"
+            os.makedirs(self.model_path, exist_ok=True)
+            self.model = vision_learner(dls, self.architectures[architecture_name], metrics=F1Score(average='macro'), path=self.model_path)
+            all_callbacks = [
+                CSVLogger,
+            ]
+            all_callbacks.extend(callbacks)
+            self.model.fine_tune(num_epochs, cbs=all_callbacks)
+
+
+            self.model.export("model.pkl")  
+
+            fig, ax = plt.subplots(figsize=(3, 3.314))
+            self.model.recorder.plot_loss(ax=ax)
+            plt.savefig(f"{self.model_path}/results.png", bbox_inches="tight", format='png')
+
+            interp = ClassificationInterpretation.from_learner(self.model)
+            img_buffer = io.BytesIO()
+            interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
+            plt.savefig(f"{self.model_path}/confusion_matrix.png", format='png')
+
+            plt.savefig(img_buffer, format='png')
+
+            
+        except Exception as e:
+            return
 
     
     def safe_eval_callback(self, callbacks: list) -> list:

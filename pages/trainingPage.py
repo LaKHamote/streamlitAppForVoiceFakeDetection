@@ -158,7 +158,7 @@ if st.button("🚀 Save New Version (Beta)"):
         st.session_state.select_speaker.warning("⚠️ Please select at least one dataset before training.")
     elif safe_callbacks is not None:
         p = multiprocessing.Process(
-            target=model.train_model,
+            target=model.background_training,
             args=(
                 user_model_name,
                 architecture_name,
