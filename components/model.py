@@ -135,13 +135,13 @@ class VoiceFakeDetection:
 
             self.model.export("model.pkl")  
 
-            fig, ax = plt.subplots(figsize=(3, 3.314))
+            fig, ax = plt.subplots()
             self.model.recorder.plot_loss(ax=ax)
             plt.savefig(f"{self.model_path}/results.png", bbox_inches="tight", format='png')
 
             interp = ClassificationInterpretation.from_learner(self.model)
             img_buffer = io.BytesIO()
-            interp.plot_confusion_matrix(figsize=(16, 16), normalize=True)
+            interp.plot_confusion_matrix(figsize=(7, 7), normalize=True)
             plt.savefig(f"{self.model_path}/confusion_matrix.png", format='png')
 
             plt.savefig(img_buffer, format='png')
