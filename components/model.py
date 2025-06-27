@@ -247,7 +247,7 @@ class TrainingLogCallback(Callback):
         st.session_state.training_out.code(f"Epoch {self.epoch} complete!")
 
 class GraphCallback(Callback):
-    def after_loss(self):
+    def before_epoch(self):
         fig, ax = plt.subplots(figsize=(4, 4))
         self.recorder.plot_loss(ax=ax, show_epochs=True)
         ax.set_ylim(0, max(1, ax.get_ylim()[1]))
