@@ -135,11 +135,18 @@ except Exception as e:
     st.session_state.valid_callbacks.error(f"❌ Error in callback: {str(e)}")
     safe_callbacks = None
 
+# Flag to stopping training
+if "stop_training" not in st.session_state:
+    st.session_state.stop_training = False
+
 # Training button
 if st.button("🚀 Train"):
     if not selected_speakers:
         st.session_state.select_speaker.warning("⚠️ Please select at least one dataset before training.")
     elif safe_callbacks is not None:
+        if st.button("🛑 Stop"):
+            st.session_state.stop_training = True
+
         model.train_model(
             user_model_name,
             architecture_name,

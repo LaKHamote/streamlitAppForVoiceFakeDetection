@@ -33,12 +33,12 @@ class VoiceFakeDetection:
         self.user_model_name = None if user_model_name.strip()=="" else user_model_name.strip()
 
         if architecture_name not in self.architectures:
-            st.warning("Architecture not suported.")
+            st.warning("❌ Architecture not suported.")
 
         if transform_type in self.transforms:
             transform = self.transforms[transform_type]
         else:
-            st.warning("Transformation not suported.")
+            st.warning("❌ Transformation not suported.")
 
         try:
             dataset_path = "/dataset"
@@ -56,7 +56,7 @@ class VoiceFakeDetection:
             time.sleep(1)
 
         except Exception as e:
-            st.error(f"Error loading data: {str(e)}")
+            st.error(f"❌ Error loading data: {str(e)}")
 
         try:
             if self.user_model_name:
@@ -69,6 +69,7 @@ class VoiceFakeDetection:
                 CSVLogger,
                 TrainingLogCallback,
                 GraphCallback,
+                StopTrainingCallback,
             ]
             all_callbacks.extend(callbacks)
             self.model.fine_tune(num_epochs, cbs=all_callbacks)
@@ -81,7 +82,7 @@ class VoiceFakeDetection:
 
             
         except Exception as e:
-            st.error(f"Error in training: {str(e)}")
+            st.error(f"❌ Error in training: {str(e)}")
 
     
     def background_training(self, user_model_name, architecture_name, transform_type, selected_speakers, selected_noises, num_epochs, num_batches, callbacks) -> None:
@@ -96,11 +97,13 @@ class VoiceFakeDetection:
         self.user_model_name = None if user_model_name.strip()=="" else user_model_name.strip()
 
         if architecture_name not in self.architectures:
+            print("❌ Architecture not supported.")
             return
 
         if transform_type in self.transforms:
             transform = self.transforms[transform_type]
         else:
+            print("❌ Transformation not supported.")
             return
 
         try:
@@ -116,7 +119,8 @@ class VoiceFakeDetection:
                 item_tfms=transform
             )
 
-        except Exception:
+        except Exception as e:
+            print(f"❌ Error loading data: {str(e)}")
             return
 
         try:
@@ -148,6 +152,7 @@ class VoiceFakeDetection:
 
             
         except Exception as e:
+            print(f"❌ Error in training: {str(e)}")
             return
 
     
@@ -267,3 +272,9 @@ class GraphCallback(Callback):
         plt.tight_layout()
         st.session_state.graph.pyplot(fig, use_container_width=False)
         plt.close(fig)
+
+class StopTrainingCallback(Callback):
+    def before_batch(self):
+        if st.session_state.get("stop_training", True):
+            st.session_state.training_out.code("Training stopped.")
+            raise CancelFitException()
