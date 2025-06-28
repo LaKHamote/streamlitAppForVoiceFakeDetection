@@ -89,11 +89,7 @@ if model is not None:
         st.markdown("---")
         st.subheader("Analysis Results:")
 
-        test_image = Image.open(spec_save_path)
-        test_image = test_image.resize((128, 128))
-        test_image = test_image.convert("RGB")
-
-        pred, pred_idx, probs = model.predict(test_image)
+        pred, pred_idx, probs = model.predict(spec_save_path)
         class_labels = model.dls.vocab
         predicted_class_name = class_labels[pred_idx.item()]
 
