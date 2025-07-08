@@ -11,12 +11,12 @@ This application provides an intuitive and interactive platform for training and
 ## ✨ Features
 
 - **Simplified Training Interface:** Visually configure and manage deep learning model training without extensive coding.
+- **Transfer Learning Model Support**: Supports training with various pre-trained transfer learning models (e.g., VGG16, ResNet).
 - **Hyperparameter Tuning Control:** Easily adjust key parameters like epochs, batch size, and learning rates via an intuitive UI.
 - **Real-time Training Monitoring:** Observe training progress, loss, and accuracy metrics in real-time, including a progress bar.
 - **Neural Vocoder Detection:** Specialized pipeline for classifying original (bonafide) vs. synthesized audio using Mel spectrograms and Convolutional Neural Networks (CNNs).
 - **Model and Result Management:** View and download training history (graphs and CSV), trained models (`.pkl`), and confusion matrices.
 - **WAV File Testing:** Upload `.wav` audio files for instant prediction and class probability visualization.
-- **Transfer Learning Model Support**: Supports training with various pre-trained transfer learning models (e.g., VGG16, ResNet).
 - **Dockerized Application**: The entire application is containerized using Docker, ensuring consistent environments across different machines and simplifying deployment by eliminating dependency conflicts.
 ---
 
@@ -278,9 +278,6 @@ This section allows the user to evaluate their model with audio files.
 Upon accessing the evaluation page, the user has the flexibility to choose which model to test. Options include using the last model trained in the current session or loading a previously downloaded '.pkl' model file, as shown in Figure 14.
 
 <img src="examples/selection_upload.png" alt="Figure 14: Interface for selecting or loading the model to be evaluated." width="500" style="display: block; margin: auto;" title="Figure 14: Interface for selecting or loading the model to be evaluated.">
-
-    
-  If the user has performed several training sessions and hasn't downloaded the model immediately, all trained results and models are automatically saved and can be accessed and selected later from the Profile Page, by searching for it by the name defined during training, as shown in Figure 5.
     
 - **Audio Upload**
 Once the model is selected, the user can upload an audio file for analysis. It is crucial that the audio meets the model's expected characteristics: '.wav' format and a sample rate of 22050Hz. The audio upload option is also visible in Figure 14.
@@ -323,10 +320,10 @@ Once the audio is processed and the model's inference is performed, the applicat
 
 We envision several exciting improvements for this application:
 
-- **Resource Optimization & Scalability:** Future work will explore integration with cloud computing services or container orchestration solutions like Kubernetes. These approaches will provide resource isolation, mitigate conflicts, and enable true large-scale, concurrent training and deployment.
-- **Enhanced Analysis & Explainable AI:** Add more in-depth post-training analysis tools. The aim is to simplify prediction understanding for novice users via intuitive visualizations while retaining raw data and detailed metrics for expert analysis.
-- **Generalization & Pipeline Expansion:** Adapt the application to serve as a generic CNN training pipeline for diverse classification tasks (e.g., image, other audio types). More ambitious future steps could involve expanding to other deep learning paradigms like object detection (e.g., YOLO) or fine-tuning Large Language Models (LLMs).
 - **Detailed Information Pages ("Learn More"):** Integrate dedicated sections for each neural network architecture and spectrogram transformation type. These pages would include detailed descriptions, diagrams, and direct links to original scientific articles, serving as a valuable educational resource, potentially incorporating translated theoretical background from this thesis.
+- **Resource Optimization & Scalability:** Future work will explore integration with cloud computing services or container orchestration solutions like Kubernetes. These approaches will provide resource isolation, mitigate conflicts, and enable true large-scale, concurrent training and deployment.
+- **Generalization & Pipeline Expansion:** Adapt the application to serve as a generic CNN training pipeline for diverse classification tasks (e.g., image, other audio types). More ambitious future steps could involve expanding to other deep learning paradigms like object detection (e.g., YOLO) or fine-tuning Large Language Models (LLMs).
+- **Enhanced Analysis & Explainable AI:** Add more in-depth post-training analysis tools. The aim is to simplify prediction understanding for novice users via intuitive visualizations while retaining raw data and detailed metrics for expert analysis.
 
 ---
 
