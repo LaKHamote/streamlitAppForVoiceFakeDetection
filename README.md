@@ -73,6 +73,7 @@ This script will perform the following actions:
 - Generate new audio for each vocoder.
 - Generate Mel Spectrograms for each noise level (defined by `NOISE_LEVEL_LIST`) in `components/VoCoderRecognition/scripts/env.sh`.
 
+OBS: If you don't have access to the submodule, there's a `.zip` file in the `components/` directory containing only the essential parts and an example dataset.
 
 #### 2.1 Custom Dataset (optional)
 
